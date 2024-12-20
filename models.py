@@ -1,12 +1,13 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+import pytz
 
 db = SQLAlchemy()
 
-class UploadSession(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    filename = db.Column(db.String(255), nullable=False)
+class UploadSession(db.Model): 
+    id = db.Column(db.Integer, primary_key=True) 
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata'))) 
+    filename = db.Column(db.String(255), nullable=False) 
     parameters = db.relationship('Parameter', backref='session', lazy=True, cascade="all, delete")
 
 class Parameter(db.Model):

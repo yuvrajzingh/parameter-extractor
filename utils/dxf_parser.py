@@ -6,25 +6,23 @@ def extract_parameters_from_dxf(file):
         doc = ezdxf.readfile(file)
         parameters = []
         
-        # Updated pattern to match dimensions with optional spaces around "X"
+        
         dimension_pattern = re.compile(r"(\d+\.\d+)\s*[xX]\s*(\d+\.\d+)", re.IGNORECASE)
-        # Specific pattern to remove only "/P" occurrences
+      
         cleanup_pattern = re.compile(r"\\P|[\\pxqc;]")
 
         for entity in doc.modelspace():
             if entity.dxftype() == 'TEXT' or entity.dxftype() == 'MTEXT':
                 text_content = entity.dxf.text
-                
-                # Search for dimensions in text
+          
                 match = dimension_pattern.search(text_content)
                 if match:
-                    # Extract room name (text without dimensions)
+                    
                     room_name = re.sub(dimension_pattern, "", text_content).strip()
+                                   
+                    room_name = re.sub(cleanup_pattern, "", room_name).strip()
                     
-                    # Apply cleanup to remove specific "/P"
-                    room_name = cleanup_pattern.sub("", room_name)
                     
-                    # Additional pattern to extract text between "H" values in curly braces
                     if "{" in room_name and "}" in room_name:
                         room_name = re.sub(r"\{H\d+\.\d+(.*?)H\d+\.\d+\}", r"\1", room_name).strip()
 
@@ -55,7 +53,7 @@ def extract_parameters_from_dxf(file):
                         'value': round(float(length) / float(breadth), 2)
                     })
 
-        # print("Extracted Parameters:", parameters)  # Debugging print statement
+        
         return parameters
     except Exception as e:
         print("Error reading DXF file:", e)

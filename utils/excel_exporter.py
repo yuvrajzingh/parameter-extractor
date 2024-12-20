@@ -13,12 +13,12 @@ def generate_excel(parameters, file_path):
         data_dict[param['name']].append(param['value'])
 
     
-    max_len = max(len(values) for values in data_dict.values())
-    for key, values in data_dict.items():
-        values.extend([''] * (max_len - len(values)))
+    # max_len = max(len(values) for values in data_dict.values())
+    # for key, values in data_dict.items():
+    #     values.extend([''] * (max_len - len(values)))
 
     print("data_dict :", data_dict)
-    # Create DataFrame and save to Excel
+
     df = pd.DataFrame(data_dict)
     df.to_excel(file_path, index=False)
 

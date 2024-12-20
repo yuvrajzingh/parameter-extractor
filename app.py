@@ -1,4 +1,4 @@
-# app.py
+
 import tempfile
 from flask import Flask, render_template, request, send_file, redirect, url_for
 from config import Config
@@ -17,21 +17,21 @@ app.config.from_object(Config)
 engine = create_engine('mysql+pymysql://root:Yuvisingh%401810@localhost:3306/')
 
 try:
-    # Create the database if it doesn't exist
     with engine.connect() as conn:
-        conn.execute(text("CREATE DATABASE IF NOT EXISTS python_task"))  # Make sure to use the correct database name 'parameters'
+        conn.execute(text("CREATE DATABASE IF NOT EXISTS python_task"))  
         print("Database 'python_task' is ready.")
 except OperationalError as e:
     print(f"Error while connecting to MySQL: {e}")
     exit()
 
-# Now initialize the database for your Flask app
+
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()  # Create tables if they do not exist
+    db.drop_all()
+    db.create_all()  
     
-# Define a permanent location for the Excel file
+
 PERMANENT_EXCEL_PATH = os.path.join(app.root_path, 'static/uploads', 'dxf_parameters.xlsx')
 
 @app.route('/')
@@ -47,12 +47,12 @@ def upload():
     if file.filename == '':
         return 'No selected file', 400
 
-    # Ensure file extension is DXF
+
     if not file.filename.lower().endswith('.dxf'):
         return 'Invalid file format. Please upload a DXF file.', 400
 
     if file:
-        # Create a temporary directory for saving the DXF file
+        
         with tempfile.TemporaryDirectory() as temp_dir:
             file_path = os.path.join(temp_dir, file.filename)
             file.save(file_path)  
@@ -77,7 +77,7 @@ def upload():
                 db.session.add(new_param)
             db.session.commit()
 
-            # Generate Excel file in a permanent location
+            
             generate_excel(parameters, PERMANENT_EXCEL_PATH)
 
             # Redirect to results page with download link
@@ -90,7 +90,7 @@ def results():
     if not session_id:
         return "Session ID missing", 400
 
-    # Fetch parameters for the specific session
+   
     parameters = Parameter.query.filter_by(session_id=session_id).all()
 
     # Group parameters by unique names
